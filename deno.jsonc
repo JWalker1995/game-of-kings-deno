@@ -1,0 +1,25 @@
+{
+  "importMap": "import_map.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "strict": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "dom.asynciterable",
+      "deno.ns"
+    ],
+    "jsx": "react"
+  },
+  "lint": {},
+  "fmt": {
+    "exclude": ["README.md"],
+    "singleQuote": true
+  },
+  "tasks": {
+    "fmt": "deno fmt --options-single-quote --watch",
+    "lint": "deno lint --watch",
+    "build": "cp index.html build/index.html && deno bundle --check --config=deno.jsonc app.tsx build/index.js",
+    "serve": "env USE_HTTPS=0 HTTP_PORT=3005 STATIC_DIR=build/ deno run --check --allow-net --allow-env --allow-read=build/ server/index.ts"
+  }
+}

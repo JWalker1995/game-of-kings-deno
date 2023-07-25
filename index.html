@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game of Kings</title>
+
+  <style>
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    html,
+    body,
+    #root {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+    }
+
+    * {
+      font-family: 'Mukta', sans-serif;
+    }
+
+    g.gok-hex-snap {
+      transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    code {
+      font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+    }
+
+    .ui.progress .bar {
+      min-width: 0;
+    }
+
+    .challenge {
+      transition: background-color 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+    .challenge:hover {
+      background-color: #cf375940;
+    }
+  </style>
+</head>
+<body >
+  <div id="root"></div>
+  <script src="index.js" defer></script>
+</body>
+</html>
