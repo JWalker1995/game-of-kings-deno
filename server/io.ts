@@ -1,11 +1,5 @@
 import { serve, serveTls } from 'std-latest/http/server.ts';
-import { Server } from 'socketio-server';
-import {
-  ClientToServerEvents,
-  InterServerEvents,
-  ServerToClientEvents,
-  SocketData,
-} from '~/common/protocol.ts';
+import Connection from '~/server/Connection.ts';
 
 const getEnvVar = (key: string) => {
   const val = Deno.env.get(key);
@@ -24,24 +18,22 @@ const urlPrefix = useHttps
   ? `https://gameofkings.io/`
   : `http://localhost:${mainPort}/`;
 
-export const io = new Server<
-  ClientToServerEvents,
-  ServerToClientEvents,
-  InterServerEvents,
-  SocketData
->();
+const handler = async (req: Request) => {
+  if (req.headers.get('upgrade') === 'websocket') {
+    const { socket, response } = Deno.upgradeWebSocket(req);
+    socket.binaryType = 'arraybuffer';
+    const conn = new Connection((data) => socket.send(data));
+    socket.addEventListener('message', (event) => {
+      if (event.data instanceof ArrayBuffer) {
+        conn.onData(new Uint8Array(event.data));
+      }
+    });
+    socket.addEventListener('close', () => {
+      conn.onClose();
+    });
+    return response;
+  }
 
-io.on('connection', (socket) => {
-  console.log(`socket ${socket.id} connected`);
-
-  socket.emit('noArg');
-
-  socket.on('disconnect', (reason) => {
-    console.log(`socket ${socket.id} disconnected due to ${reason}`);
-  });
-});
-
-const handler = io.handler(async (req) => {
   if (!req.url.startsWith(urlPrefix)) {
     console.error(`Discarding request to url ${req.url}`);
     return new Response(null, { status: 404 });
@@ -59,7 +51,7 @@ const handler = io.handler(async (req) => {
     console.error(`Can't open file ${path}`);
     return new Response(null, { status: 404 });
   }
-});
+};
 
 if (useHttps) {
   await Promise.all([
