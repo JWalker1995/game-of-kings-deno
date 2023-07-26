@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, List, Modal, Segment } from 'semantic-ui-react';
 
-import CreateGameForm from './CreateGameForm';
+import CreateGameForm from './CreateGameForm.tsx';
 
 export default () => {
   const [isOpen, setOpen] = React.useState(false);

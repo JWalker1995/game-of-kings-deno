@@ -19,23 +19,6 @@ export const getModuleInstance = <
     string,
     (state: StateType, action: any) => StateType
   >,
->(name: string): ModuleInstance<StateType, ReducersType> => {
-  if (moduleInstances.has(name)) {
-    return moduleInstances.get(name) as (ModuleInstance<
-      StateType,
-      ReducersType
-    >);
-  } else {
-    throw new Error(`Module ${name} does not exist`);
-  }
-};
-
-export const createModuleInstance = <
-  StateType,
-  ReducersType extends Record<
-    string,
-    (state: StateType, action: any) => StateType
-  >,
 >(
   name: string,
   defn: {
@@ -44,7 +27,7 @@ export const createModuleInstance = <
   },
 ): ModuleInstance<StateType, ReducersType> => {
   if (moduleInstances.has(name)) {
-    return moduleInstances.get(name)! as ModuleInstance<
+    return moduleInstances.get(name) as ModuleInstance<
       StateType,
       ReducersType
     >;
@@ -57,7 +40,7 @@ export const createModuleInstance = <
   Object.entries(defn.reducers).forEach(([k, reducer]) => {
     actors[k] = (action: any) => {
       state = reducer(state, action);
-      const str = JSON.stringify({ key: `${name}-${k}`, arg: action });
+      const str = JSON.stringify({ type: `${name}-${k}`, arg: action });
       connections.forEach((conn) => conn.sendText(str));
     };
   });
@@ -69,7 +52,7 @@ export const createModuleInstance = <
       if (actors.hasOwnProperty('join')) {
         actors.join(conn.uuid);
       }
-      conn.sendText(JSON.stringify({ key: `${name}-reset`, arg: state }));
+      conn.sendText(JSON.stringify({ type: `${name}-reset`, arg: state }));
       connections.add(conn);
     },
     leave: (conn: Connection) => {

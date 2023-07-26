@@ -25,10 +25,14 @@ const handler = async (req: Request) => {
     socket.binaryType = 'arraybuffer';
     const conn = new Connection((data) => socket.send(data));
     socket.addEventListener('message', (event) => {
-      if (event.data instanceof ArrayBuffer) {
-        conn.onBinary(new Uint8Array(event.data));
-      } else if (typeof event.data === 'string') {
-        conn.onText(event.data);
+      try {
+        if (event.data instanceof ArrayBuffer) {
+          conn.onBinary(new Uint8Array(event.data));
+        } else if (typeof event.data === 'string') {
+          conn.onText(event.data);
+        }
+      } catch (err) {
+        console.error(err);
       }
     });
     socket.addEventListener('close', () => {

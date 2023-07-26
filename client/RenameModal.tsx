@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios';
 import {
   Button,
   Dimmer,
@@ -10,7 +9,7 @@ import {
   Modal,
 } from 'semantic-ui-react';
 
-import { send } from './socket';
+import { send } from './socket.ts';
 
 export default () => {
   const [username, setUsername] = React.useState('');
@@ -40,7 +39,7 @@ export default () => {
           <Button
             type='submit'
             onClick={() => {
-              send('user-rename', username);
+              send('renameUser', username);
               setOpen(false);
             }}
           >

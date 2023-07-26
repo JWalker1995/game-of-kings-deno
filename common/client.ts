@@ -1,15 +1,44 @@
-import io from 'socketio-client';
+import { encodeIdentify, getIdentity } from '~/common/packet.ts';
 
-export const connect = (serverUrl: string, userId: string, token: string) => {
-  const ioParams = new URLSearchParams();
-  ioParams.set('userId', userId);
-  const socket = io(serverUrl, {
-    query: ioParams.toString(),
-  });
+const identity = getIdentity();
 
-  socket.on('error', (err: any) => console.error(err));
+export const connect = () => {
+  // let backoff = 1000;
+  const buffer: (string | Uint8Array)[] = [];
+  const listeners = new Map<string, Set<(arg: any) => void>>();
 
-  socket.emit('auth', { token });
+  const url = new URL(window.location.origin);
+  url.protocol = { 'http:': 'ws', 'https:': 'wss' }[url.protocol]!;
+
+  let socket: WebSocket;
+  (async () => {
+    while (true) {
+      socket = new WebSocket(url);
+      socket.binaryType = 'arraybuffer';
+      socket.addEventListener('open', () => {
+        socket.send(encodeIdentify(identity));
+        buffer.forEach((data) => socket.send(data));
+        buffer.length = 0;
+      });
+      socket.addEventListener('error', (e) => console.error(e));
+
+      socket.addEventListener('message', (e) => {
+        const { type, arg } = JSON.parse(e.data);
+        listeners.get(type)?.forEach((cb) => cb(arg));
+      });
+
+      await new Promise((resolve) => socket.addEventListener('close', resolve));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+  })();
+
+  const send = (data: string | Uint8Array) => {
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.send(data);
+    } else {
+      buffer.push(data);
+    }
+  };
 
   const modules = new Map<
     string,
@@ -53,7 +82,7 @@ export const connect = (serverUrl: string, userId: string, token: string) => {
 
       const unsubs = [
         () => {
-          socket.emit('unsub', name);
+          send(JSON.stringify({ type: 'unsub', arg: name }));
         },
       ].concat(
         Object.entries(defn.reducers).map(([k, reducer]) => {
@@ -81,14 +110,19 @@ export const connect = (serverUrl: string, userId: string, token: string) => {
             mod.listeners.forEach((setter) => setter(mod!.state));
           };
 
-          socket.on(eventType, cb);
+          let l = listeners.get(eventType);
+          if (l === undefined) {
+            l = new Set();
+            listeners.set(eventType, l);
+          }
+          l.add(cb);
           return () => {
-            socket.off(eventType, cb);
+            l!.delete(cb);
           };
         }),
       );
 
-      socket.emit('sub', name);
+      send(JSON.stringify({ type: 'sub', arg: name }));
     }
 
     callback(mod.state);
@@ -110,5 +144,5 @@ export const connect = (serverUrl: string, userId: string, token: string) => {
     };
   };
 
-  return { socket, onModuleUpdate };
+  return { send, onModuleUpdate };
 };

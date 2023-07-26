@@ -1,9 +1,30 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import Header from './Header.tsx';
 import Match from './Match.tsx';
 import Lobby from './Lobby.tsx';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: (
+      <>
+        <Header />
+        <Lobby />
+      </>
+    ),
+  },
+  {
+    path: '/match/:matchId',
+    element: (
+      <>
+        <Header />
+        <Match />
+      </>
+    ),
+  },
+]);
 
 const App = () => (
   <div
@@ -14,18 +35,7 @@ const App = () => (
       flexDirection: 'column',
     }}
   >
-    <BrowserRouter>
-      <Switch>
-        <Route path='/match/:matchId'>
-          <Header />
-          <Match />
-        </Route>
-        <Route path='/'>
-          <Header />
-          <Lobby />
-        </Route>
-      </Switch>
-    </BrowserRouter>
+    <RouterProvider router={router} />
   </div>
 );
 

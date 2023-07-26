@@ -1,13 +1,12 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { redirect, useNavigate } from 'react-router-dom';
 import { List } from 'semantic-ui-react';
 
-import { Challenge } from 'game-of-kings-common';
-
-import { userId } from './user';
-import { send } from './socket';
-import UserBadge from './UserBadge';
-import VariantDescription from './VariantDescription';
+import { userId } from './user.ts';
+import { send } from './socket.ts';
+import UserBadge from './UserBadge.tsx';
+import VariantDescription from './VariantDescription.tsx';
+import { Challenge } from '~/common/types.ts';
 
 const ChallengeItem = ({
   id,
@@ -16,19 +15,21 @@ const ChallengeItem = ({
   variant,
   matchId,
 }: Challenge) => {
+  const navigate = useNavigate();
+
   const isMine = challengerId === userId;
 
   if ((challengerId === userId || opponentId === userId) && matchId) {
-    return <Redirect to={`/match/${matchId}`} />;
+    navigate(`/match/${matchId}`);
   }
 
   return (
     <List.Item
       key={id}
       onClick={isMine
-        ? () => send('lobby-retract-challenge', id)
+        ? () => send('retractChallenge', id)
         : () =>
-          send('lobby-accept-challenge', {
+          send('acceptChallenge', {
             challengeId: id,
             acceptorId: userId,
           })}

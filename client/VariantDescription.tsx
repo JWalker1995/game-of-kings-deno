@@ -1,6 +1,5 @@
 import React from 'react';
-
-import { Variant } from 'game-of-kings-common';
+import { Variant } from '~/common/types.ts';
 
 const VariantDescription = ({
   radius,

@@ -1,18 +1,11 @@
 import React from 'react';
-import { v4 as uuid } from 'uuid';
 
-import { connect } from 'game-of-kings-common';
+import { connect } from '~/common/client.ts';
 
-import { token, userId } from './user';
+const conn = connect();
 
-const conn = connect(
-  '/',
-  userId,
-  token,
-);
-
-export const send = (event: string, ...args: any[]) =>
-  conn.socket.emit(event, ...args);
+export const send = (type: string, arg: any) =>
+  conn.send(JSON.stringify({ type, arg }));
 
 export const useModule = <StateType>(
   name: string,
@@ -34,12 +27,12 @@ export const useModule = <StateType>(
 export const useLatency = () => {
   const [latency, setLatency] = React.useState<number | undefined>(undefined);
 
-  React.useEffect(() => {
-    conn.socket.on('pong', setLatency);
-    return () => {
-      conn.socket.off('pong', setLatency);
-    };
-  }, []);
+  // React.useEffect(() => {
+  //   conn.socket.on('pong', setLatency);
+  //   return () => {
+  //     conn.socket.off('pong', setLatency);
+  //   };
+  // }, []);
 
   return latency;
 };

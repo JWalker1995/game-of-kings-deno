@@ -1,6 +1,6 @@
-import { Sha3_256 } from 'https://deno.land/std@0.160.0/hash/sha3.ts';
 import secp from '../common/secp.ts';
 import { bin2hex, hex2bin } from '~/common/hex.ts';
+import { hash } from '~/common/hash.ts';
 
 export const SIGNATURE_LENGTH = 64;
 
@@ -11,12 +11,6 @@ export interface SignerCtx {
 export interface VerifierCtx {
   publicKey?: Uint8Array;
 }
-
-const hash = (data: Uint8Array) => {
-  const algo = new Sha3_256();
-  algo.update(data);
-  return new Uint8Array(algo.digest());
-};
 
 const getPrivateKey = (): Uint8Array => {
   const pkid = new URLSearchParams(window.location?.search).get('pkid') || '';

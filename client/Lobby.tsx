@@ -1,13 +1,11 @@
 import React from 'react';
 import { Header, List, Segment } from 'semantic-ui-react';
 
-import { LobbyModule } from 'game-of-kings-common';
-
-import ChallengeItem from './ChallengeItem';
-import MatchItem from './MatchItem';
-import CreateGameModal from './CreateGameModal';
-import { useModule } from './socket';
-import BowIcon from './bow-icon.png';
+import ChallengeItem from './ChallengeItem.tsx';
+import MatchItem from './MatchItem.tsx';
+import CreateGameModal from './CreateGameModal.tsx';
+import { useModule } from './socket.ts';
+import { LobbyModule } from '~/common/modules.ts';
 
 const Lobby = () => {
   const { users, challenges, liveMatchIds, recentMatchIds } = useModule(
@@ -40,7 +38,7 @@ const Lobby = () => {
           </Header>
 
           <List divided relaxed>
-            {challenges.map(ChallengeItem)}
+            {challenges.map((challenge) => <ChallengeItem {...challenge} />)}
           </List>
 
           <CreateGameModal />

@@ -1,11 +1,8 @@
 import React from 'react';
 
-import LoginModal from './LoginModal';
-import RegisterModal from './RegisterModal';
-import RenameModal from './RenameModal';
-import { userId } from './user';
-import UserBadge from './UserBadge';
-import BowIcon from './bow-icon.png';
+import RenameModal from './RenameModal.tsx';
+import UserBadge from './UserBadge.tsx';
+import { userId } from '~/client/user.ts';
 
 export default () => (
   <div
@@ -18,7 +15,7 @@ export default () => (
       alignItems: 'center',
       padding: '16px',
 
-      backgroundImage: `url(${BowIcon})`,
+      backgroundImage: `url(/bow-icon.png)`,
       backgroundSize: 'auto 80%',
       backgroundPosition: 'left center',
       backgroundRepeat: 'no-repeat',

@@ -1,13 +1,5 @@
-import { v4 as uuid } from 'uuid';
+import { bin2hex } from '~/common/hex.ts';
+import { getIdentity } from '~/common/packet.ts';
+import { hash } from '~/common/hash.ts';
 
-export const userId = localStorage.getItem('gok-user-id') || uuid();
-localStorage.setItem('gok-user-id', userId);
-
-const generateToken = () => {
-  const data = new Uint8Array(64);
-  window.crypto.getRandomValues(data);
-  return Buffer.from(data).toString('hex');
-};
-
-export const token = localStorage.getItem('gok-token') || generateToken();
-localStorage.setItem('gok-token', token);
+export const userId = bin2hex(hash(getIdentity().publicKey));

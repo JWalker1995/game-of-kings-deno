@@ -2,30 +2,18 @@ import React from 'react';
 import { Button } from 'semantic-ui-react';
 import chroma from 'chroma-js';
 
-import {
-  enumerateLegalMoves,
-  getBoard,
-  getPriorState,
-  hexFactory,
-  Match,
-  Piece,
-} from 'game-of-kings-common';
-
-import { User } from './codecs';
-import MatchTimer from './MatchTimer';
-import AbortTimer from './AbortTimer';
-import PieceSpawner from './PieceSpawner';
-import HexPoly, { hexStaticBlock, setHexPolyTransform } from './HexPoly';
-import UserBadge from './UserBadge';
-import { send } from './socket';
-import { userId } from './user';
-
-const corners = hexFactory()
-  .corners()
-  .map(({ x, y }) => ({
-    x: x - hexFactory().width() / 2,
-    y: y - hexFactory().height() / 2,
-  }));
+import { User } from './codecs.ts';
+import MatchTimer from './MatchTimer.tsx';
+import AbortTimer from './AbortTimer.tsx';
+import PieceSpawner from './PieceSpawner.tsx';
+import HexPoly, { hexStaticBlock, setHexPolyTransform } from './HexPoly.tsx';
+import UserBadge from './UserBadge.tsx';
+import { send } from './socket.ts';
+import { userId } from './user.ts';
+import { getBoard, Hex } from '~/common/board.ts';
+import { Match, Piece } from '~/common/types.ts';
+import { getPriorState } from '~/common/match.ts';
+import { enumerateLegalMoves } from '~/common/moves.ts';
 
 const cellScale = 1;
 const colors = ['#4771b2', '#cf3759'];
@@ -214,7 +202,7 @@ const Board = ({ matchId, match }: { matchId: string; match: Match }) => {
 
           let onMouseUp = move
             ? () => {
-              send('match-do-move', { ...move, matchId });
+              send('doMove', { ...move, matchId });
 
               moveDstRef.current = undefined;
               selectCellIndex(undefined);

@@ -1,11 +1,10 @@
 import React from 'react';
 import { Button, Form } from 'semantic-ui-react';
-import { v4 as uuid } from 'uuid';
 
-import { isVariantValid, Variant } from 'game-of-kings-common';
-
-import { userId } from './user';
-import { send } from './socket';
+import { userId } from './user.ts';
+import { send } from './socket.ts';
+import { isVariantValid } from '~/common/cells.ts';
+import { Variant } from '~/common/types.ts';
 
 const fieldDefns = [
   {
@@ -76,8 +75,8 @@ export default ({ onClose }: { onClose: () => void }) => {
   return (
     <Form
       onSubmit={() => {
-        send('lobby-extend-challenge', {
-          id: uuid(),
+        send('extendChallenge', {
+          id: crypto.randomUUID(),
           challengerId: userId,
           variant: Object.fromEntries(fields.map((f) => [f.key, f.value])),
         });

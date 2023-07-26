@@ -1,35 +1,38 @@
-import User from '~/server/User.ts';
 import { decodeIdentify, VerifierCtx } from '~/common/packet.ts';
 import { bin2hex } from '~/common/hex.ts';
-import { users } from '~/server/registries.ts';
-import { dispatch } from '~/server/dispatch.ts';
-import { GenericModuleInstance } from '~/server/modules.ts';
+
+import { dispatch, dispatchJoin, dispatchLeave } from '~/server/dispatch.ts';
+import { GenericModuleInstance, getModuleInstance } from '~/server/modules.ts';
+import { UserModule } from '~/common/modules.ts';
+import { hash } from '~/common/hash.ts';
 
 export default class Connection {
   public uuid = crypto.randomUUID();
 
-  private user?: User;
   private ctx: VerifierCtx = {};
+  private userId?: string;
 
   public modules = new Set<GenericModuleInstance>();
 
   constructor(public sendText: (str: string) => void) {
     // TODO: Send UUID as challenge for client to sign
+    dispatchJoin(this);
   }
 
-  public getUser() {
-    return this.user;
+  public getUserId() {
+    if (this.userId === undefined) {
+      throw new Error(`Cannot get the user id of an unidentified connection!`);
+    }
+    return this.userId;
+  }
+
+  public getUserModule() {
+    return getModuleInstance(`user-${this.getUserId()}`, UserModule);
   }
 
   public onBinary(buf: Uint8Array) {
-    const identity = decodeIdentify(buf, this.ctx);
-    const key = bin2hex(identity);
-    this.user = users.get(key);
-    if (this.user === undefined) {
-      this.user = new User(identity);
-      users.set(key, this.user);
-    }
-    this.user.connections.add(this);
+    const publicKey = decodeIdentify(buf, this.ctx);
+    this.userId = bin2hex(hash(publicKey));
   }
 
   public onText(str: string) {
@@ -37,7 +40,6 @@ export default class Connection {
   }
 
   public onClose() {
-    this.user?.connections.delete(this);
-    this.modules.forEach((mod) => mod.leave(this));
+    dispatchLeave(this);
   }
 }

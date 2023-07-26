@@ -1,9 +1,8 @@
 import React from 'react';
 import { Progress, Segment } from 'semantic-ui-react';
 
-import { Match } from 'game-of-kings-common';
-
-import { CountdownTimer, PausedTimer, RendererProps } from './Timer';
+import { CountdownTimer, PausedTimer, RendererProps } from './Timer.tsx';
+import { Match } from '~/common/types.ts';
 
 const positions = ['bottom' as 'bottom', 'top' as 'top'];
 

@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { Match } from 'game-of-kings-common';
-
-import { userId } from './user';
-import HexPoly from './HexPoly';
+import { userId } from './user.ts';
+import HexPoly from './HexPoly.tsx';
+import { Match } from '~/common/types.ts';
 
 const colors = ['#4771b2', '#cf3759'];
 

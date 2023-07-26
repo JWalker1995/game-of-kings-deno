@@ -1,13 +1,12 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { List } from 'semantic-ui-react';
 
-import { MatchModule, UNINITIALIZED } from 'game-of-kings-common';
-
-import { userId } from './user';
-import { send, useModule } from './socket';
-import UserBadge from './UserBadge';
-import VariantDescription from './VariantDescription';
+import { userId } from './user.ts';
+import { useModule } from './socket.ts';
+import UserBadge from './UserBadge.tsx';
+import VariantDescription from './VariantDescription.tsx';
+import { MatchModule, UNINITIALIZED } from '~/common/modules.ts';
 
 /*
 	variant: VariantCodec,
@@ -34,7 +33,7 @@ import VariantDescription from './VariantDescription';
 */
 
 const MatchItem = ({ matchId }: { matchId: string }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const match = useModule(`match-${matchId}`, MatchModule);
 
@@ -47,7 +46,7 @@ const MatchItem = ({ matchId }: { matchId: string }) => {
   return (
     <List.Item
       key={matchId}
-      onClick={() => history.push(`/match/${matchId}`)}
+      onClick={() => navigate(`/match/${matchId}`)}
     >
       <div className='challenge'>
         <List.Header>

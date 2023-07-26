@@ -7,6 +7,7 @@
 
     "secp256k1": "https://deno.land/x/secp256k1@2.0.0/index.ts",
     "semantic-ui-react": "https://esm.sh/semantic-ui-react@v3.0.0-beta.0?target=esnext&pin=v129",
+    "__comment__": "Need to keep this version up-to-date with the css version in static/index.html",
     "chroma-js": "https://esm.sh/chroma-js@2.4.0?target=esnext&pin=v129",
     "honeycomb-grid": "https://esm.sh/honeycomb-grid@4.1.4?target=esnext&pin=v129",
     "glicko2-lite": "https://esm.sh/glicko2-lite@3.2.0?target=esnext&pin=v129",

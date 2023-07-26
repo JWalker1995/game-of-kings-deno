@@ -1,10 +1,9 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-import { MatchModule, UNINITIALIZED } from 'game-of-kings-common';
-
-import { useModule } from './socket';
-import Board from './Board';
+import { useModule } from './socket.ts';
+import Board from './Board.tsx';
+import { MatchModule, UNINITIALIZED } from '~/common/modules.ts';
 
 const Match = () => {
   const { matchId } = useParams();
@@ -14,7 +13,7 @@ const Match = () => {
   if (match === UNINITIALIZED) {
     return <>Loading...</>;
   } else {
-    return <Board matchId={matchId} match={match} />;
+    return <Board matchId={matchId!} match={match} />;
   }
 };
 

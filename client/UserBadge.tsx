@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { UserModule } from 'game-of-kings-common';
-
-import { useModule } from './socket';
+import { useModule } from './socket.ts';
+import { UserModule } from '~/common/modules.ts';
 
 const UserBadge = ({ userId }: { userId: string }) => {
   const { username, rating } = useModule(`user-${userId}`, UserModule);

@@ -1,9 +1,8 @@
 import React from 'react';
 import { List } from 'semantic-ui-react';
 
-import { LobbyState } from 'game-of-kings-common';
-
-import ChallengeItem from './ChallengeItem';
+import ChallengeItem from './ChallengeItem.tsx';
+import { LobbyState } from '~/common/types.ts';
 
 export default ({
   challenges,

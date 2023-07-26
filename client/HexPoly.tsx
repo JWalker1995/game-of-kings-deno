@@ -1,15 +1,12 @@
 import React from 'react';
+import { Hex } from '~/common/board.ts';
 
-import { hexFactory } from 'game-of-kings-common';
-
-const corners = hexFactory()
-  .corners()
-  .map(({ x, y }) => ({
-    x: x - hexFactory().width() / 2,
-    y: y - hexFactory().height() / 2,
-  }))
-  .map(({ x, y }: { x: number; y: number }) => `${x},${y}`)
-  .join(' ');
+const corners = (() => {
+  const hex = new Hex();
+  return hex.corners
+    .map(({ x, y }: { x: number; y: number }) => `${x},${y}`)
+    .join(' ');
+})();
 
 const boardScale = 1;
 
