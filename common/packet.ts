@@ -4,20 +4,12 @@ import { bin2hex, hex2bin } from '~/common/hex.ts';
 
 export const SIGNATURE_LENGTH = 64;
 
-export enum MessageType {
-  Null,
-  Event,
-  Identify = 255,
-}
-
 export interface SignerCtx {
   privateKey: Uint8Array;
   publicKey: Uint8Array;
-  nonce: number;
 }
 export interface VerifierCtx {
   publicKey?: Uint8Array;
-  nonce: number;
 }
 
 const hash = (data: Uint8Array) => {
@@ -43,26 +35,15 @@ export const getIdentity = (): SignerCtx => {
   return {
     privateKey,
     publicKey: secp.getPublicKey(privateKey),
-    nonce: Date.now(),
   };
 };
 
-export const encode = (type: MessageType, msg: any, ctx: SignerCtx) => {
-  const data = new TextEncoder().encode(JSON.stringify(msg));
-  return sign(type, data, ctx);
-};
 export const encodeIdentify = (ctx: SignerCtx) => {
-  return sign(MessageType.Identify, ctx.publicKey, ctx);
-};
-const sign = (type: MessageType, data: Uint8Array, ctx: SignerCtx) => {
-  // TODO: Use ctx.nonce to prevent replay/reorder attacks
+  // TODO: Prevent replay attacks
 
-  const buf = new Uint8Array(SIGNATURE_LENGTH + 1 + data.byteLength);
-  buf[SIGNATURE_LENGTH] = type;
-  buf.set(data, SIGNATURE_LENGTH + 1);
-
+  const buf = new Uint8Array(SIGNATURE_LENGTH + ctx.publicKey.byteLength);
   const sig = secp.sign(
-    hash(buf.subarray(SIGNATURE_LENGTH)),
+    hash(ctx.publicKey),
     ctx.privateKey,
     { lowS: true, extraEntropy: secp.etc.randomBytes(32) },
   ).toCompactRawBytes();
@@ -70,41 +51,25 @@ const sign = (type: MessageType, data: Uint8Array, ctx: SignerCtx) => {
     throw new Error(`Internal error: Unexpected signature length!`);
   }
   buf.set(sig, 0);
+  buf.set(ctx.publicKey, SIGNATURE_LENGTH);
 
   return buf;
 };
 
-export const decode = (
+export const decodeIdentify = (
   buf: Uint8Array,
   ctx: VerifierCtx,
-): { identity: Uint8Array } | { type: MessageType; msg: any } => {
-  const isIdentify = buf[SIGNATURE_LENGTH] === MessageType.Identify;
-
-  const pubKey = isIdentify
-    ? buf.subarray(SIGNATURE_LENGTH + 1)
-    : ctx.publicKey;
-  if (!pubKey) {
-    throw new Error(`Cannot verify with no public key!`);
-  }
-
+): Uint8Array => {
+  const pubKey = buf.subarray(SIGNATURE_LENGTH);
   const valid = secp.verify(
     buf.subarray(0, SIGNATURE_LENGTH),
-    hash(buf.subarray(SIGNATURE_LENGTH)),
+    hash(pubKey),
     pubKey,
   );
   if (!valid) {
     throw new Error(`Invalid signature!`);
   }
 
-  if (isIdentify) {
-    ctx.publicKey = pubKey;
-    return { identity: pubKey };
-  } else {
-    return {
-      type: buf[SIGNATURE_LENGTH] as MessageType,
-      msg: JSON.parse(
-        new TextDecoder().decode(buf.subarray(SIGNATURE_LENGTH + 1)),
-      ),
-    };
-  }
+  ctx.publicKey = pubKey;
+  return pubKey;
 };

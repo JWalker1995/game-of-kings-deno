@@ -146,3 +146,8 @@ export const MatchPartialCodec = t.exact(
     ),
   }),
 );
+
+export const PacketCodec = t.strict({
+  type: t.string,
+  arg: t.any,
+});

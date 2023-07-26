@@ -1,20 +1,20 @@
 {
   "imports": {
     "~/": "./",
-    "react": "https://esm.sh/react@18.2.0?target=esnext&pin=v99",
-    "react-dom": "https://esm.sh/react-dom@18.2.0?target=esnext&pin=v99",
-    "react-router-dom": "https://esm.sh/react-router-dom@6.14.2?target=esnext&pin=v99",
+    "react": "https://esm.sh/react@18.2.0?target=esnext&pin=v129",
+    "react-dom": "https://esm.sh/react-dom@18.2.0?target=esnext&pin=v129",
+    "react-router-dom": "https://esm.sh/react-router-dom@6.14.2?target=esnext&pin=v129",
 
     "secp256k1": "https://deno.land/x/secp256k1@2.0.0/index.ts",
-    "semantic-ui-react": "https://esm.sh/semantic-ui-react@v3.0.0-beta.0?target=esnext&pin=v99",
-    "chroma-js": "https://esm.sh/chroma-js@2.4.0?target=esnext&pin=v99",
-    "honeycomb-grid": "https://esm.sh/honeycomb-grid@4.1.4?target=esnext&pin=v99",
-    "glicko2-lite": "https://esm.sh/glicko2-lite@3.2.0?target=esnext&pin=v99",
+    "semantic-ui-react": "https://esm.sh/semantic-ui-react@v3.0.0-beta.0?target=esnext&pin=v129",
+    "chroma-js": "https://esm.sh/chroma-js@2.4.0?target=esnext&pin=v129",
+    "honeycomb-grid": "https://esm.sh/honeycomb-grid@4.1.4?target=esnext&pin=v129",
+    "glicko2-lite": "https://esm.sh/glicko2-lite@3.2.0?target=esnext&pin=v129",
 
-    "io-ts": "https://esm.sh/io-ts@2.2.20?target=esnext&pin=v99",
-    "fp-ts": "https://esm.sh/fp-ts@2.16.0?target=esnext&pin=v99",
+    "io-ts": "https://esm.sh/io-ts@2.2.20?target=esnext&pin=v129",
+    "fp-ts": "https://esm.sh/fp-ts@2.16.0?target=esnext&pin=v129",
 
-    "std-latest/": "https://deno.land/std@0.195.0/",
+    "std-latest/": "https://deno.land/std@0.196.0/",
 
     "__comment__": "TODO: jspm.dev, esm.sh, and cdn.skypack.dev basically do the same thing (I think), so choose one?"
   },
