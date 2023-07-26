@@ -1,30 +1,18 @@
 // import { makeDecoder, SubMsgCodec, UnsubMsgCodec } from 'game-of-kings-common';
 
 import { makeDecoder } from '~/common/coder.ts';
-import { io } from './io.ts';
 import { SubMsgCodec, UnsubMsgCodec } from '~/common/codecs.ts';
+import Connection from '~/server/Connection.ts';
 
 export type ModuleInstance<StateType, ReducersType> = {
   actors: { [key in keyof ReducersType]: (data: any) => void };
   getState: () => StateType;
-  join: (userId: string) => void;
-  leave: (userId: string) => void;
+  join: (conn: Connection) => void;
+  leave: (conn: Connection) => void;
 };
 export type GenericModuleInstance = ModuleInstance<any, Record<string, never>>;
 
 const moduleInstances = new Map<string, GenericModuleInstance>();
-
-/*
-setInterval(
-	() =>
-		moduleInstances.forEach((inst, key) => {
-			if (inst.getJoinedCount() === 0) {
-				moduleInstances.delete(key);
-			}
-		}),
-	10000,
-);
-*/
 
 export const getModuleInstance = <
   StateType,
@@ -49,7 +37,7 @@ export const getModuleInstance = <
   }
 };
 
-export const createModuleInstance = async <
+export const createModuleInstance = <
   StateType,
   ReducersType extends Record<
     string,
@@ -61,7 +49,7 @@ export const createModuleInstance = async <
     initialState: StateType;
     reducers: ReducersType;
   },
-): Promise<ModuleInstance<StateType, ReducersType>> => {
+): ModuleInstance<StateType, ReducersType> => {
   if (moduleInstances.has(name)) {
     return moduleInstances.get(name)! as ModuleInstance<
       StateType,
@@ -70,27 +58,34 @@ export const createModuleInstance = async <
   }
 
   let state: StateType = defn.initialState;
-
   const actors: Record<string, (action: any) => void> = {};
+  const connections = new Set<Connection>();
 
   Object.entries(defn.reducers).forEach(([k, reducer]) => {
-    actors[k] = async (action: any) => {
+    actors[k] = (action: any) => {
       state = reducer(state, action);
-      io.to(name).emit(`${name}-${k}`, action);
+      const serialization = new TextEncoder().encode(
+        JSON.stringify({ key: `${name}-${k}`, arg: action }),
+      );
+      connections.forEach((conn) => conn.sendData(serialization));
     };
   });
 
   const inst = {
     actors: actors as { [key in keyof ReducersType]: (data: any) => void },
     getState: () => state,
-    join: (userId: string) => {
+    join: (conn: Connection) => {
       if (actors.hasOwnProperty('join')) {
-        actors.join(userId);
+        actors.join(conn.uuid);
       }
+      const serialization = new TextEncoder().encode(
+        JSON.stringify({ key: `${name}-reset`, arg: state }),
+      );
+      conn.sendData(serialization);
     },
-    leave: (userId: string) => {
+    leave: (conn: Connection) => {
       if (actors.hasOwnProperty('leave')) {
-        actors.leave(userId);
+        actors.leave(conn.uuid);
       }
     },
   };

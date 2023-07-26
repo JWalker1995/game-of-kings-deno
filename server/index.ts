@@ -6,7 +6,6 @@ import {
   getModuleInstance,
   ModuleInstance,
 } from './modules.ts';
-import { io } from './io.ts';
 import { ABORT_TIMEOUT } from '~/common/constants.ts';
 import { makeDecoder } from '~/common/coder.ts';
 import { MoveCodec } from '~/common/codecs.ts';

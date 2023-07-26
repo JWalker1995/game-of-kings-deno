@@ -1,124 +1,110 @@
+import { Sha3_256 } from 'https://deno.land/std@0.160.0/hash/sha3.ts';
+import secp from '../common/secp.ts';
+import { bin2hex, hex2bin } from '~/common/hex.ts';
+
 export const SIGNATURE_LENGTH = 64;
 
 export enum MessageType {
-  Identify,
-  Rename,
+  Null,
+  Event,
+  Identify = 255,
 }
 
-export interface ClientCtx {
-  privateKey: CryptoKey;
-  publicKey: CryptoKey;
+export interface SignerCtx {
+  privateKey: Uint8Array;
+  publicKey: Uint8Array;
   nonce: number;
 }
-export interface ServerCtx {
-  publicKey?: CryptoKey;
+export interface VerifierCtx {
+  publicKey?: Uint8Array;
   nonce: number;
 }
 
-const keyParams = {
-  name: 'ECDSA',
-  namedCurve: 'P-256',
-  hash: { name: 'SHA-256' },
+const hash = (data: Uint8Array) => {
+  const algo = new Sha3_256();
+  algo.update(data);
+  return new Uint8Array(algo.digest());
 };
 
-export const createIdentity = async (): Promise<ClientCtx> => ({
-  ...await crypto.subtle.generateKey(keyParams, true, ['sign']),
-  nonce: Date.now(),
-});
-export const serializeIdentity = async (ctx: ClientCtx) =>
-  JSON.stringify({
-    privateKey: await crypto.subtle.exportKey('jwk', ctx.privateKey),
-    publicKey: await crypto.subtle.exportKey('jwk', ctx.publicKey),
-    nonce: ctx.nonce,
-  });
-export const deserializeIdentity = async (
-  serialization: string,
-): Promise<ClientCtx> => {
-  const { privateKey, publicKey, nonce } = JSON.parse(serialization);
+const getPrivateKey = (): Uint8Array => {
+  const pkid = new URLSearchParams(window.location?.search).get('pkid') || '';
+  const hex = localStorage.getItem(`gok_pk_${pkid}`);
+  if (hex) {
+    return hex2bin(hex);
+  } else {
+    const key = secp.utils.randomPrivateKey();
+    localStorage.setItem(`gok_pk_${pkid}`, bin2hex(key));
+    return key;
+  }
+};
+
+export const getIdentity = (): SignerCtx => {
+  const privateKey = getPrivateKey();
   return {
-    privateKey: await crypto.subtle.importKey(
-      'jwk',
-      privateKey,
-      keyParams,
-      true,
-      ['sign'],
-    ),
-    publicKey: await crypto.subtle.importKey(
-      'jwk',
-      publicKey,
-      keyParams,
-      true,
-      ['sign'],
-    ),
-    nonce,
+    privateKey,
+    publicKey: secp.getPublicKey(privateKey),
+    nonce: Date.now(),
   };
 };
 
-export const encode = async (
-  typeIdx: MessageType,
-  msg: any,
-  ctx: ClientCtx,
-) => {
+export const encode = (type: MessageType, msg: any, ctx: SignerCtx) => {
+  const data = new TextEncoder().encode(JSON.stringify(msg));
+  return sign(type, data, ctx);
+};
+export const encodeIdentify = (ctx: SignerCtx) => {
+  return sign(MessageType.Identify, ctx.publicKey, ctx);
+};
+const sign = (type: MessageType, data: Uint8Array, ctx: SignerCtx) => {
   // TODO: Use ctx.nonce to prevent replay/reorder attacks
 
-  const isIdentify = typeIdx === MessageType.Identify;
+  const buf = new Uint8Array(SIGNATURE_LENGTH + 1 + data.byteLength);
+  buf[SIGNATURE_LENGTH] = type;
+  buf.set(data, SIGNATURE_LENGTH + 1);
 
-  const dataBuf = isIdentify
-    ? new Uint8Array(await crypto.subtle.exportKey('raw', ctx.publicKey))
-    : new TextEncoder().encode(JSON.stringify(msg));
-  const buf = new Uint8Array(SIGNATURE_LENGTH + 1 + dataBuf.byteLength);
-  buf[SIGNATURE_LENGTH] = typeIdx;
-  buf.set(dataBuf, SIGNATURE_LENGTH + 1);
-
-  const sig = await crypto.subtle.sign(
-    keyParams,
+  const sig = secp.sign(
+    hash(buf.subarray(SIGNATURE_LENGTH)),
     ctx.privateKey,
-    buf.subarray(SIGNATURE_LENGTH),
-  );
-
+    { lowS: true, extraEntropy: secp.etc.randomBytes(32) },
+  ).toCompactRawBytes();
   if (sig.byteLength !== SIGNATURE_LENGTH) {
     throw new Error(`Internal error: Unexpected signature length!`);
   }
-  buf.set(new Uint8Array(sig), 0);
+  buf.set(sig, 0);
 
   return buf;
 };
 
-export const decode = async (buf: Uint8Array, ctx: ServerCtx) => {
+export const decode = (
+  buf: Uint8Array,
+  ctx: VerifierCtx,
+): { identity: Uint8Array } | { type: MessageType; msg: any } => {
   const isIdentify = buf[SIGNATURE_LENGTH] === MessageType.Identify;
 
   const pubKey = isIdentify
-    ? await crypto.subtle.importKey(
-      'raw',
-      buf.subarray(SIGNATURE_LENGTH + 1),
-      keyParams,
-      true,
-      ['verify'],
-    )
+    ? buf.subarray(SIGNATURE_LENGTH + 1)
     : ctx.publicKey;
   if (!pubKey) {
     throw new Error(`Cannot verify with no public key!`);
   }
 
-  const valid = await crypto.subtle.verify(
-    { name: 'ECDSA', hash: { name: 'SHA-256' } },
-    pubKey,
+  const valid = secp.verify(
     buf.subarray(0, SIGNATURE_LENGTH),
-    buf.subarray(SIGNATURE_LENGTH),
+    hash(buf.subarray(SIGNATURE_LENGTH)),
+    pubKey,
   );
-
   if (!valid) {
     throw new Error(`Invalid signature!`);
   }
 
   if (isIdentify) {
     ctx.publicKey = pubKey;
+    return { identity: pubKey };
+  } else {
+    return {
+      type: buf[SIGNATURE_LENGTH] as MessageType,
+      msg: JSON.parse(
+        new TextDecoder().decode(buf.subarray(SIGNATURE_LENGTH + 1)),
+      ),
+    };
   }
-
-  return {
-    typeIdx: buf[SIGNATURE_LENGTH] as MessageType,
-    msg: isIdentify ? null : JSON.parse(
-      new TextDecoder().decode(buf.subarray(SIGNATURE_LENGTH + 1)),
-    ),
-  };
 };
