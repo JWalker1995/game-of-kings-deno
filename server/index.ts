@@ -92,7 +92,11 @@ while (true) {
         new Response(null, {
           status: 301,
           headers: {
-            Location: 'https://' + req.headers.get('Host') + req.url,
+            Location: (() => {
+              const url = new URL(req.url);
+              url.protocol = 'https';
+              return url.toString();
+            })(),
           },
         }),
       port: parseInt(getEnvVar('HTTP_PORT')),
