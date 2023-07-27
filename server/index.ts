@@ -16,11 +16,13 @@ const staticDir = getEnvVar('STATIC_DIR');
 const mainPort = parseInt(
   useHttps ? getEnvVar('HTTPS_PORT') : getEnvVar('HTTP_PORT'),
 );
-const urlPrefix = useHttps
-  ? `https://gameofkings.io/`
-  : mainPort === 80
-  ? `http://localhost/`
-  : `http://localhost:${mainPort}/`;
+const protocol = useHttps ? 'https:' : 'http:';
+const prefixes = [
+  mainPort === 80
+    ? `${protocol}//localhost/`
+    : `${protocol}//localhost:${mainPort}/`,
+  `${protocol}//gameofkings.io/`,
+];
 
 if (Deno.env.has('DYNDNS_USERNAME') || Deno.env.has('DYNDNS_PASSWORD')) {
   await updateDns({
@@ -52,7 +54,7 @@ const handler = async (req: Request) => {
     return response;
   }
 
-  if (!req.url.startsWith(urlPrefix)) {
+  if (!prefixes.some((pfx) => req.url.startsWith(pfx))) {
     console.error(`Discarding request to url ${req.url}`);
     return new Response(null, { status: 404 });
   }
