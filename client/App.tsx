@@ -1,11 +1,11 @@
 import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createHashRouter, RouterProvider } from 'react-router-dom';
 
 import Header from './Header.tsx';
 import Match from './Match.tsx';
 import Lobby from './Lobby.tsx';
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: '/',
     element: (

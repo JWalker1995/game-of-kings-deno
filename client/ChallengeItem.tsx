@@ -17,16 +17,17 @@ const ChallengeItem = ({
 }: Challenge) => {
   const navigate = useNavigate();
 
-  const isMine = challengerId === userId;
-
-  if ((challengerId === userId || opponentId === userId) && matchId) {
-    navigate(`/match/${matchId}`);
+  if (matchId) {
+    if (challengerId === userId || opponentId === userId) {
+      navigate(`/match/${matchId}`);
+    }
+    return <></>;
   }
 
   return (
     <List.Item
       key={id}
-      onClick={isMine
+      onClick={challengerId === userId
         ? () => send('retractChallenge', id)
         : () =>
           send('acceptChallenge', {

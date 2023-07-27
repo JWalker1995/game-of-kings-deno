@@ -151,7 +151,7 @@ const dispatchers: { [key: string]: (conn: Connection, arg: any) => void } = {
     const challenge = lobby
       .getState()
       .challenges.find((c) => c.id === arg.challengeId);
-    if (!challenge) {
+    if (!challenge || challenge.matchId) {
       throw new Error(`Invalid challengeId: ${arg.challengeId}`);
     }
 
