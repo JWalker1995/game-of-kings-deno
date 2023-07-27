@@ -21,9 +21,11 @@ const AbortTimer = ({
       <CountdownTimer
         endTime={match.moveStartDate + ABORT_TIMEOUT}
         totalTimeMs={ABORT_TIMEOUT}
-        renderer={({ seconds }: RendererProps) => (
+        renderer={({ minutes, seconds }: RendererProps) => (
           <em style={{ fontSize: '12px' }}>
-            {seconds} seconds to make first move
+            {minutes
+              ? `${minutes} minutes to make first move`
+              : `${seconds} seconds to make first move`}
           </em>
         )}
       />
