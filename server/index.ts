@@ -18,6 +18,8 @@ const mainPort = parseInt(
 );
 const urlPrefix = useHttps
   ? `https://gameofkings.io/`
+  : mainPort === 80
+  ? `http://localhost/`
   : `http://localhost:${mainPort}/`;
 
 if (Deno.env.has('DYNDNS_USERNAME') || Deno.env.has('DYNDNS_PASSWORD')) {
