@@ -1,4 +1,5 @@
 import Connection from '~/server/Connection.ts';
+import { updateDns } from '~/server/updateDns.ts';
 
 const serverRestartInterval = 1000 * 60 * 60 * 24 * 7 * 0.7;
 
@@ -18,6 +19,14 @@ const mainPort = parseInt(
 const urlPrefix = useHttps
   ? `https://gameofkings.io/`
   : `http://localhost:${mainPort}/`;
+
+if (Deno.env.has('DYNDNS_USERNAME') || Deno.env.has('DYNDNS_PASSWORD')) {
+  await updateDns({
+    username: getEnvVar('DYNDNS_USERNAME'),
+    password: getEnvVar('DYNDNS_PASSWORD'),
+  });
+  console.log('Updated dynamic dns!');
+}
 
 const handler = async (req: Request) => {
   if (req.headers.get('upgrade') === 'websocket') {
