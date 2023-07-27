@@ -2,7 +2,7 @@ import { serve, serveTls } from 'std-latest/http/server.ts';
 import Connection from '~/server/Connection.ts';
 import { updateDns } from '~/server/updateDns.ts';
 
-const useDenoServe = false;
+const useDenoServe = true;
 
 const serverRestartInterval = 1000 * 60 * 60 * 24 * 7 * 0.7;
 
@@ -21,6 +21,9 @@ const mainPort = parseInt(
 );
 const protocol = useHttps ? 'https:' : 'http:';
 const prefixes = [
+  mainPort === 80
+    ? `${protocol}//127.0.0.1/`
+    : `${protocol}//127.0.0.1:${mainPort}/`,
   mainPort === 80
     ? `${protocol}//localhost/`
     : `${protocol}//localhost:${mainPort}/`,
