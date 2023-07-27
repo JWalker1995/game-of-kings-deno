@@ -52,7 +52,7 @@ const getModuleDefn = (name: string): {
   return defn;
 };
 
-const preMove = async (
+const preMove = (
   matchId: string,
   match: ModuleInstance<
     (typeof MatchModule)['initialState'],
@@ -96,24 +96,24 @@ const preMove = async (
 
   if (status === 'playing') {
     if (log.length < 2) {
-      const timeout = setTimeout(async () => {
+      const timeout = setTimeout(() => {
         matchTimeouts.delete(matchId);
-        await match.actors.abort({});
-        await endMatch();
+        match.actors.abort({});
+        endMatch();
       }, moveStartDate + ABORT_TIMEOUT - Date.now());
 
       matchTimeouts.set(matchId, timeout);
     } else {
-      const timeout = setTimeout(async () => {
+      const timeout = setTimeout(() => {
         matchTimeouts.delete(matchId);
-        await match.actors.timeout({ winner: 1 - playerToMove });
-        await endMatch();
+        match.actors.timeout({ winner: 1 - playerToMove });
+        endMatch();
       }, moveStartDate + players[playerToMove].timeForMoveMs - Date.now());
 
       matchTimeouts.set(matchId, timeout);
     }
   } else {
-    await endMatch();
+    endMatch();
   }
 };
 
