@@ -15,19 +15,29 @@ export const connect = () => {
     while (true) {
       socket = new WebSocket(url);
       socket.binaryType = 'arraybuffer';
+
+      socket.addEventListener(
+        'error',
+        (e) => console.error(`WebSocket error:`, e),
+      );
+
       socket.addEventListener('open', () => {
         socket.send(encodeIdentify(identity));
         buffer.forEach((data) => socket.send(data));
         buffer.length = 0;
       });
-      socket.addEventListener('error', (e) => console.error(e));
 
       socket.addEventListener('message', (e) => {
         const { type, arg } = JSON.parse(e.data);
         listeners.get(type)?.forEach((cb) => cb(arg));
       });
 
-      await new Promise((resolve) => socket.addEventListener('close', resolve));
+      await new Promise<void>((resolve) =>
+        socket.addEventListener('close', (e) => {
+          console.error(`WebSocket closed:`, e);
+          resolve();
+        })
+      );
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   })();
