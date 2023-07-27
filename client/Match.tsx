@@ -8,7 +8,6 @@ import { MatchModule, UNINITIALIZED } from '~/common/modules.ts';
 const Match = () => {
   const { matchId } = useParams();
   const match = useModule(`match-${matchId}`, MatchModule);
-  console.log(match);
 
   if (match === UNINITIALIZED) {
     return <>Loading...</>;

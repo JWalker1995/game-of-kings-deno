@@ -1,5 +1,8 @@
+import { serve, serveTls } from 'std-latest/http/server.ts';
 import Connection from '~/server/Connection.ts';
 import { updateDns } from '~/server/updateDns.ts';
+
+const useDenoServe = false;
 
 const serverRestartInterval = 1000 * 60 * 60 * 24 * 7 * 0.7;
 
@@ -73,13 +76,39 @@ const handler = async (req: Request) => {
   }
 };
 
+const redirectHandler = (req: Request) =>
+  new Response(null, {
+    status: 301,
+    headers: {
+      Location: (() => {
+        const url = new URL(req.url);
+        url.protocol = 'https';
+        return url.toString();
+      })(),
+    },
+  });
+
+const doServeHttp = (
+  handler: (req: Request) => Response | Promise<Response>,
+  opts: Deno.ServeOptions,
+) =>
+  useDenoServe
+    ? Deno.serve({ handler, ...opts }).finished
+    : serve(handler, opts);
+const doServeHttps = (
+  handler: (req: Request) => Response | Promise<Response>,
+  opts: Deno.ServeTlsOptions,
+) =>
+  useDenoServe
+    ? Deno.serve({ handler, ...opts }).finished
+    : serveTls(handler, opts);
+
 while (true) {
   const restartController = new AbortController();
   setTimeout(() => restartController.abort(), serverRestartInterval);
 
   if (useHttps) {
-    const mainServer = Deno.serve({
-      handler,
+    const mainServer = doServeHttps(handler, {
       port: mainPort,
       signal: restartController.signal,
 
@@ -87,29 +116,16 @@ while (true) {
       cert: await Deno.readTextFile(getEnvVar('TLS_CERT_FILE')),
     });
 
-    const upgradeServer = Deno.serve({
-      handler: (req) =>
-        new Response(null, {
-          status: 301,
-          headers: {
-            Location: (() => {
-              const url = new URL(req.url);
-              url.protocol = 'https';
-              return url.toString();
-            })(),
-          },
-        }),
+    const upgradeServer = doServeHttp(redirectHandler, {
       port: parseInt(getEnvVar('HTTP_PORT')),
       signal: restartController.signal,
     });
 
-    await Promise.all([mainServer.finished, upgradeServer.finished]);
+    await Promise.all([mainServer, upgradeServer]);
   } else {
-    const server = Deno.serve({
-      handler,
+    await doServeHttp(handler, {
       port: mainPort,
       signal: restartController.signal,
     });
-    await server.finished;
   }
 }

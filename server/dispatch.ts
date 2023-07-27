@@ -8,11 +8,7 @@ import {
   SubMsgCodec,
   UnsubMsgCodec,
 } from '~/common/codecs.ts';
-import {
-  GenericModuleInstance,
-  getModuleInstance,
-  ModuleInstance,
-} from '~/server/modules.ts';
+import { getModuleInstance, ModuleInstance } from '~/server/modules.ts';
 import { LobbyModule, MatchModule, UserModule } from '~/common/modules.ts';
 import { tutorialUserId } from '~/common/tutorial.ts';
 import { shuffleInPlace } from '~/common/utils.ts';
