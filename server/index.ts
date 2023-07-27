@@ -83,13 +83,8 @@ while (true) {
       port: mainPort,
       signal: restartController.signal,
 
-      key: await Deno.readTextFile(
-        '/etc/letsencrypt/live/gameofkings.io/privkey.pem',
-      ),
-      cert: await Deno.readTextFile(
-        '/etc/letsencrypt/live/gameofkings.io/cert.pem',
-      ),
-      // caFile:'/etc/letsencrypt/live/gameofkings.io/chain.pem',
+      key: await Deno.readTextFile(getEnvVar('TLS_KEY_FILE')),
+      cert: await Deno.readTextFile(getEnvVar('TLS_CERT_FILE')),
     });
 
     const upgradeServer = Deno.serve({
