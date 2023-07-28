@@ -16,7 +16,7 @@ const fieldDefns = [
   {
     key: 'formation',
     label: 'Formation',
-    default: 'colonies',
+    default: 'monarchy',
     options: {
       Colonies: 'colonies',
       Monarchy: 'monarchy',
@@ -33,7 +33,7 @@ const fieldDefns = [
   {
     key: 'timeInitialMs',
     label: 'Time control initial',
-    default: 5 * 60 * 1000,
+    default: 15 * 60 * 1000,
     options: {
       '1:00': 1 * 60 * 1000,
       '2:00': 2 * 60 * 1000,
@@ -47,7 +47,7 @@ const fieldDefns = [
   {
     key: 'timeIncrementMs',
     label: 'Time control increment',
-    default: 8 * 1000,
+    default: 15 * 1000,
     options: {
       '0:00': 0 * 1000,
       '0:01': 1 * 1000,

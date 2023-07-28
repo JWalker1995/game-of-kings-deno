@@ -1,5 +1,4 @@
 import * as Honeycomb from 'honeycomb-grid';
-import { Variant } from '~/common/types.ts';
 
 export interface Cell {
   neighborIndices: number[];
@@ -14,12 +13,14 @@ export interface Cell {
 
 export type Board = Cell[];
 
+export type BoardVariant = { radius: number };
+
 export const Hex = Honeycomb.defineHex({
   // size: 1,
   orientation: Honeycomb.Orientation.POINTY,
 });
 
-const makeBoard = (variant: Variant): Board => {
+const makeBoard = (variant: BoardVariant): Board => {
   const grid = new Honeycomb.Grid(
     Hex,
     Honeycomb.spiral({ radius: variant.radius }),
@@ -46,8 +47,8 @@ const makeBoard = (variant: Variant): Board => {
   }));
 };
 
-const boardCache = new WeakMap<Variant, Board>();
-export const getBoard = (variant: Variant): Board =>
+const boardCache = new WeakMap<BoardVariant, Board>();
+export const getBoard = (variant: BoardVariant): Board =>
   boardCache.get(variant) ||
   (() => {
     const board = makeBoard(variant);

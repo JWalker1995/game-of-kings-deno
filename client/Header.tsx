@@ -3,6 +3,8 @@ import React from 'react';
 import RenameModal from './RenameModal.tsx';
 import UserBadge from './UserBadge.tsx';
 import { userId } from '~/client/user.ts';
+import GithubMark from '~/client/GithubMark.tsx';
+import RulesModal from '~/client/RulesModal.tsx';
 
 export default () => (
   <div
@@ -44,5 +46,11 @@ export default () => (
     <UserBadge userId={userId} />
     <div style={{ padding: '0.5em' }}>|</div>
     <RenameModal />
+    <div style={{ padding: '0.5em' }}>|</div>
+    <RulesModal />
+    <div style={{ padding: '0.5em' }}>|</div>
+    <a href='https://github.com/JWalker1995/game-of-kings-deno' target='_blank'>
+      <GithubMark size={20} />
+    </a>
   </div>
 );

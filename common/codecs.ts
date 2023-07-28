@@ -5,7 +5,7 @@ const opt = <InnerType extends t.Any>(type: InnerType) =>
 const orNull = <InnerType extends t.Any>(type: InnerType) =>
   t.union([type, t.null]);
 
-const NonNegIntCodec = t.brand(
+export const NonNegIntCodec = t.brand(
   t.number,
   (n): n is t.Branded<number, { readonly NonNegInt: symbol }> =>
     n >= 0 && Number.isInteger(n),

@@ -15,6 +15,8 @@ const assert = (cond: boolean) => {
   return true;
 };
 
+export type Formation = Record<string, Piece>;
+
 const formations = {
   tutorial: (variant: Variant) => ({}),
   monarchy: (variant: Variant) =>
@@ -65,7 +67,7 @@ const formations = {
         type: 'king',
       },
     },
-} as Record<string, (variant: Variant) => Record<string, Piece>>;
+} as Record<string, (variant: Variant) => Formation>;
 
 export const isVariantValid = (variant: Variant) => {
   try {

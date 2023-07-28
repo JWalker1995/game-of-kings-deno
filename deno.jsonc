@@ -19,7 +19,7 @@
   "tasks": {
     "fmt": "deno fmt --options-single-quote --watch",
     "lint": "deno lint --watch",
-    "build": "rm -rf build/ && cp -R static/ build/ && deno bundle --check --config=deno.jsonc client/index.tsx build/index.js",
+    "build": "rm -rf build/ && cp -R static/ build/ && curl https://cdn.jsdelivr.net/npm/semantic-ui@2.5/dist/semantic.min.css --output build/semantic.min.css && deno bundle --check --config=deno.jsonc client/index.tsx build/index.js",
     "serve": "deno run --check --allow-net --allow-env --allow-read=build/ server/index.ts"
   }
 }
