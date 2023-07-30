@@ -156,19 +156,6 @@ const Board = ({ matchId, match }: { matchId: string; match: Match }) => {
       >
         {hexStaticBlock()}
 
-        <defs>
-          <marker
-            id='head'
-            orient='auto'
-            markerWidth='3'
-            markerHeight='4'
-            refX='1'
-            refY='2'
-          >
-            <path d='M0,0 V4 L2,2 Z' fill='#478778FF' />
-          </marker>
-        </defs>
-
         {match.variant.formation !== 'tutorial' && (
           <filter
             id='hex-glow'
@@ -330,25 +317,6 @@ const Board = ({ matchId, match }: { matchId: string; match: Match }) => {
           );
         })*/
         }
-
-        {board[4].neighborIndices.map((idx) => {
-          let { x: sx, y: sy } = board[4];
-          let { x: ex, y: ey } = board[idx];
-          sx = sx * 0.6 + ex * (1 - 0.6);
-          sy = sy * 0.6 + ey * (1 - 0.6);
-          ex = sx * 0.1 + ex * (1 - 0.1);
-          ey = sy * 0.1 + ey * (1 - 0.1);
-          return (
-            <path
-              id='arrow-line'
-              marker-end='url(#head)'
-              stroke-width='0.15'
-              fill='none'
-              stroke='#478778FF'
-              d={`M${sx},${sy} L${ex},${ey}`}
-            />
-          );
-        })}
       </svg>
 
       <div
