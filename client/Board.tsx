@@ -87,11 +87,10 @@ const Board = ({ matchId, match }: { matchId: string; match: Match }) => {
   const lastMove = view.log.length && view.log[view.log.length - 1];
 
   const pieceMapper = (cell: Piece, index: number) => {
-    const move = validMoves.find(
-      (m) =>
-        m.type === 'movePiece' &&
-        m.fromIndex === selectedCellIndex &&
-        m.toIndex === index,
+    const move = validMoves.find((m) =>
+      m.type === 'movePiece' &&
+      m.fromIndex === selectedCellIndex &&
+      m.toIndex === index
     );
 
     let color = chroma(colors[cell.playerIndex]);
@@ -466,9 +465,9 @@ const Board = ({ matchId, match }: { matchId: string; match: Match }) => {
           </div>
 
           <PieceSpawner
-            match={view}
+            spawnsAvailable={match.players[0].spawnsAvailable}
             playerIndex={0}
-            onMouseDown={moveIndex === Infinity
+            onMouseDown={moveIndex === Infinity && selfPlayerIndex === 0
               ? () => selectCellIndex('spawn')
               : undefined}
           />
@@ -519,9 +518,9 @@ const Board = ({ matchId, match }: { matchId: string; match: Match }) => {
           )}
 
           <PieceSpawner
-            match={view}
+            spawnsAvailable={match.players[1].spawnsAvailable}
             playerIndex={1}
-            onMouseDown={moveIndex === Infinity
+            onMouseDown={moveIndex === Infinity && selfPlayerIndex === 1
               ? () => selectCellIndex('spawn')
               : undefined}
           />

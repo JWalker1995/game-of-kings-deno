@@ -7,11 +7,11 @@ import { Match } from '~/common/types.ts';
 const colors = ['#4771b2', '#cf3759'];
 
 const PieceSpawner = ({
-  match,
+  spawnsAvailable,
   playerIndex,
   onMouseDown,
 }: {
-  match: Match;
+  spawnsAvailable: number;
   playerIndex: number;
   onMouseDown?: () => void;
 }) => (
@@ -36,22 +36,17 @@ const PieceSpawner = ({
         cell={{ x: 0, y: 0 }}
         fill={colors[playerIndex]}
         scale={1}
-        onMouseDown={onMouseDown &&
-            match.players[playerIndex].userId === userId &&
-            match.players[playerIndex].spawnsAvailable > 0
+        onMouseDown={onMouseDown && spawnsAvailable > 0
           ? (e) => {
             e.preventDefault();
             onMouseDown();
           }
           : undefined}
-        style={match.players[playerIndex].userId === userId &&
-            match.players[playerIndex].spawnsAvailable > 0
-          ? { cursor: 'grab' }
-          : {}}
+        style={onMouseDown && spawnsAvailable > 0 ? { cursor: 'grab' } : {}}
       />
     </svg>
     <span style={{ fontWeight: 'bold', fontSize: '16px' }}>
-      x{match.players[playerIndex].spawnsAvailable}
+      x{spawnsAvailable}
     </span>
   </div>
 );
