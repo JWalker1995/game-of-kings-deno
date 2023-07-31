@@ -15,14 +15,20 @@ const ChallengeItem = ({
   variant,
   matchId,
 }: Challenge) => {
+  const wasChallenge = React.useRef(false);
   const navigate = useNavigate();
 
   if (matchId) {
-    if (challengerId === userId || opponentId === userId) {
+    if (
+      wasChallenge.current && (challengerId === userId || opponentId === userId)
+    ) {
       navigate(`/match/${matchId}`);
     }
+    wasChallenge.current = false;
     return <></>;
   }
+
+  wasChallenge.current = true;
 
   return (
     <List.Item

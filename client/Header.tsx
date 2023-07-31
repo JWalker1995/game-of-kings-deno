@@ -5,6 +5,7 @@ import UserBadge from './UserBadge.tsx';
 import { userId } from '~/client/user.ts';
 import GithubMark from '~/client/GithubMark.tsx';
 import RulesModal from '~/client/RulesModal.tsx';
+import { OpenRulesModalContext } from '~/client/context.ts';
 
 export default () => (
   <div
@@ -47,7 +48,12 @@ export default () => (
     <div style={{ padding: '0.5em' }}>|</div>
     <RenameModal />
     <div style={{ padding: '0.5em' }}>|</div>
-    <RulesModal />
+    <div
+      style={{ cursor: 'pointer' }}
+      onClick={React.useContext(OpenRulesModalContext).bind(null, true)}
+    >
+      Rules
+    </div>
     <div style={{ padding: '0.5em' }}>|</div>
     <a href='https://github.com/JWalker1995/game-of-kings-deno' target='_blank'>
       <GithubMark size={20} />

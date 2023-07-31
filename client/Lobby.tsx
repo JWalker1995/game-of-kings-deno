@@ -1,5 +1,5 @@
 import React from 'react';
-import { Header, List, Segment } from 'semantic-ui-react';
+import { Button, Header, List, Segment } from 'semantic-ui-react';
 
 import ChallengeItem from './ChallengeItem.tsx';
 import MatchItem from './MatchItem.tsx';
@@ -20,6 +20,12 @@ const Lobby = () => {
         background: `radial-gradient(#fff, #ccc)`,
       }}
     >
+      {
+        /*<Button primary fluid onClick={() => {}}>
+        Rules
+      </Button>*/
+      }
+
       <Segment
         style={{
           margin: '20px auto',

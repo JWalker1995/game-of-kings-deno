@@ -73,6 +73,20 @@ export default ({
     return [info.at, { ...info, el, setEl }];
   }));
 
+  // const viewCoords = viewBox.split(' ');
+  // const viewRect = (
+  //   <rect
+  //     x={viewCoords[0]}
+  //     y={viewCoords[1]}
+  //     width={viewCoords[2]}
+  //     height={viewCoords[3]}
+  //     fill='none'
+  //     stroke='red'
+  //     strokeWidth='0.1'
+  //   />
+  // );
+  const viewRect = undefined;
+
   return (
     <>
       <svg
@@ -209,6 +223,8 @@ export default ({
             );
           }
         })}
+
+        {viewRect}
       </svg>
 
       {Object.values(infoMap).map((info) => {
