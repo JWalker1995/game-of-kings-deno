@@ -19,7 +19,7 @@ export default (
           <Grid.Column style={{ marginTop: 0 }}>
             <BoardSnapshotRenderer
               radius={4}
-              viewBox='-3 -3 6 6'
+              viewBox={{ minX: -3, minY: -3, maxX: 3, maxY: 3 }}
               style={{ height: 200, width: '100%' }}
               formation={{
                 '0,0,0': { playerIndex: 0, type: 'king' },
@@ -31,7 +31,7 @@ export default (
           <Grid.Column style={{ marginTop: 0 }}>
             <BoardSnapshotRenderer
               radius={4}
-              viewBox='-3 -3 6 6'
+              viewBox={{ minX: -3, minY: -3, maxX: 3, maxY: 3 }}
               style={{ height: 200, width: '100%' }}
               formation={{
                 '0,0,0': { playerIndex: 0, type: 'pawn' },
@@ -55,7 +55,7 @@ export default (
           <Grid.Column style={{ marginTop: 0 }}>
             <BoardSnapshotRenderer
               radius={8}
-              viewBox='-10 -3 20 6'
+              viewBox={{ minX: -10, minY: -3, maxX: 10, maxY: 3 }}
               style={{ height: 200, width: '100%' }}
               formation={{
                 '-4,-1,5': { playerIndex: 0, type: 'pawn' },
@@ -114,7 +114,7 @@ export default (
           <Grid.Column style={{ marginTop: 0 }}>
             <BoardSnapshotRenderer
               radius={3}
-              viewBox='-2 -3 13 6'
+              viewBox={{ minX: -2, minY: -3, maxX: 11, maxY: 3 }}
               style={{ height: 200, width: '100%' }}
               formation={{
                 '1,0,-1': { playerIndex: 0, type: 'king' },
@@ -126,7 +126,7 @@ export default (
           <Grid.Column style={{ marginTop: 0 }}>
             <BoardSnapshotRenderer
               radius={4}
-              viewBox='-3 -3 6 6'
+              viewBox={{ minX: -3, minY: -3, maxX: 3, maxY: 3 }}
               style={{ height: 200, width: '100%' }}
               formation={{
                 '0,0,0': { playerIndex: 0, type: 'king' },
@@ -151,7 +151,7 @@ export default (
           <Grid.Column style={{ marginTop: 0 }}>
             <BoardSnapshotRenderer
               radius={5}
-              viewBox='-5 -3 12 6'
+              viewBox={{ minX: -5, minY: -3, maxX: 7, maxY: 3 }}
               style={{ height: 200, width: '100%' }}
               formation={{
                 '-1,-1,2': { playerIndex: 1, type: 'pawn' },
@@ -167,7 +167,7 @@ export default (
           <Grid.Column style={{ marginTop: 0 }}>
             <BoardSnapshotRenderer
               radius={4}
-              viewBox='-5 -3 10 6'
+              viewBox={{ minX: -5, minY: -3, maxX: 5, maxY: 3 }}
               style={{ height: 200, width: '100%' }}
               formation={{
                 '-1,0,1': { playerIndex: 1, type: 'pawn' },

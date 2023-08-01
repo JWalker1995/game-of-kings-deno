@@ -14,6 +14,7 @@ import { getBoard, Hex } from '~/common/board.ts';
 import { Match, Piece } from '~/common/types.ts';
 import { getPriorState } from '~/common/match.ts';
 import { enumerateLegalMoves } from '~/common/moves.ts';
+import Svg from '~/client/Svg.tsx';
 
 export const colors = ['#4771b2', '#cf3759'];
 const transitionHexSnap = false;
@@ -137,22 +138,16 @@ const Board = ({ matchId, match }: { matchId: string; match: Match }) => {
     <div
       style={{
         flex: '1',
-        display: 'flex',
-        flexDirection: 'row',
-        overflow: 'hidden',
+        overflow: 'auto',
         background: `radial-gradient(#fff, #ccc)`,
-        backgroundPosition: '-100px 0',
+        display: 'flex',
+        // flexDirection: 'column',
+        // alignItems: 'center',
       }}
     >
-      <svg
-        viewBox={`${-size} ${-size} ${size * 2} ${size * 2}`}
-        xmlns='http://www.w3.org/2000/svg'
-        xmlnsXlink='http://www.w3.org/1999/xlink'
-        style={{
-          flex: '1',
-          overflow: 'visible',
-          zIndex: 10,
-        }}
+      <Svg
+        viewBox={{ minX: -size, minY: -size, maxX: size, maxY: size }}
+        style={{ flex: '1' }}
       >
         {hexStaticBlock()}
 
@@ -258,15 +253,16 @@ const Board = ({ matchId, match }: { matchId: string; match: Match }) => {
         )}
 
         {lastMove &&
-          (lastMove.type === 'movePiece' || lastMove.type === 'spawnPiece') && (
-          <HexPoly
-            cell={board[lastMove.toIndex]}
-            fill='white'
-            stroke='none'
-            scale={0.95}
-            filter='url(#hex-glow)'
-          />
-        )}
+          (lastMove.type === 'movePiece' || lastMove.type === 'spawnPiece') &&
+          (
+            <HexPoly
+              cell={board[lastMove.toIndex]}
+              fill='white'
+              stroke='none'
+              scale={0.95}
+              filter='url(#hex-glow)'
+            />
+          )}
 
         {selectedCellIndex !== undefined &&
           selectedCellIndex !== 'spawn' &&
@@ -317,7 +313,7 @@ const Board = ({ matchId, match }: { matchId: string; match: Match }) => {
           );
         })*/
         }
-      </svg>
+      </Svg>
 
       <div
         style={{

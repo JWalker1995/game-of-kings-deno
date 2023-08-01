@@ -20,12 +20,6 @@ const Lobby = () => {
         background: `radial-gradient(#fff, #ccc)`,
       }}
     >
-      {
-        /*<Button primary fluid onClick={() => {}}>
-        Rules
-      </Button>*/
-      }
-
       <Segment
         style={{
           margin: '20px auto',

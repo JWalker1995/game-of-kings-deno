@@ -12,6 +12,7 @@ import { makeDecoder } from '~/common/coder.ts';
 import { NonNegIntCodec, VariantCodec } from '~/common/codecs.ts';
 import { Label } from 'semantic-ui-react';
 import PieceSpawner from '~/client/PieceSpawner.tsx';
+import Svg, { ViewBox } from '~/client/Svg.tsx';
 
 const variantDecoder = makeDecoder(VariantCodec);
 
@@ -27,7 +28,7 @@ export default ({
   playerIndex = 0,
 }: {
   radius: number;
-  viewBox: string;
+  viewBox: ViewBox;
   style?: React.CSSProperties;
   formation: Formation;
   infos?: { at: string; text: string; heightOffset?: number }[];
@@ -89,12 +90,7 @@ export default ({
 
   return (
     <>
-      <svg
-        viewBox={viewBox}
-        xmlns='http://www.w3.org/2000/svg'
-        xmlnsXlink='http://www.w3.org/1999/xlink'
-        style={style}
-      >
+      <Svg viewBox={viewBox} style={style}>
         {hexStaticBlock()}
 
         <defs>
@@ -225,7 +221,7 @@ export default ({
         })}
 
         {viewRect}
-      </svg>
+      </Svg>
 
       {Object.values(infoMap).map((info) => {
         if (info.el) {

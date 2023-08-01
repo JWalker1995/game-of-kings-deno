@@ -16,15 +16,14 @@ export default () => (
       zIndex: 4,
       display: 'flex',
       alignItems: 'center',
-      padding: '16px',
-
-      backgroundImage: `url(/bow-icon.png)`,
-      backgroundSize: 'auto 80%',
-      backgroundPosition: 'left center',
-      backgroundRepeat: 'no-repeat',
-      paddingLeft: '40px',
+      padding: '6px',
+      paddingRight: '8px',
+      overflowX: 'auto',
+      overflowY: 'hidden',
+      whiteSpace: 'nowrap',
     }}
   >
+    <img style={{ height: '100%' }} src='/bow-icon.png' />
     <h1
       style={{
         margin: '0',
@@ -36,7 +35,7 @@ export default () => (
         gameofkings.io
       </a>
     </h1>
-    <div style={{ flex: '1' }}></div>
+    <div style={{ flex: '1', minWidth: '16px' }}></div>
     {
       /*
     <LoginModal />
@@ -44,6 +43,7 @@ export default () => (
     <RegisterModal />
     */
     }
+
     <UserBadge userId={userId} />
     <div style={{ padding: '0.5em' }}>|</div>
     <RenameModal />
